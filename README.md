@@ -36,11 +36,12 @@ selected lines.
 
 ### Mappings
 
-- `o` or `<cr>` on a commit to display the content of it
-- `o` or `<cr>` on commits to display the diff in the range
-- `O` opens a new tab instead
+- `o` or `<Space>` on a commit to display its content, `<CR>` to also
+  switch window focus
+- `o` or `<Space>` on commits to display the diff in the range, `<CR>` to
+  also switch window focus
 - `gb` for `:Gbrowse`
-- `]]` and `[[` to move between commits
+- `]]` and `[[` (or `J` and `K`) to move between commits
 - `.` to start command-line with `:Git [CURSOR] SHA` à la fugitive
 - `q` to close
 

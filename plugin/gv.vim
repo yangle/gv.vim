@@ -167,12 +167,12 @@ endfunction
 function! s:maps()
   nnoremap <silent> <buffer> q    :$wincmd w <bar> close<cr>
   nnoremap <silent> <buffer> gb   :call <sid>gbrowse()<cr>
-  nnoremap <silent> <buffer> <cr> :call <sid>open(0)<cr>
+  nnoremap <silent> <buffer> <cr> :call <sid>open(0)<cr>:$wincmd w<cr>
   nnoremap <silent> <buffer> o    :call <sid>open(0)<cr>
-  nnoremap <silent> <buffer> O    :call <sid>open(0, 1)<cr>
-  xnoremap <silent> <buffer> <cr> :<c-u>call <sid>open(1)<cr>
+  nnoremap <silent> <buffer> <space> :call <sid>open(0)<cr>
+  xnoremap <silent> <buffer> <cr> :<c-u>call <sid>open(1)<cr>:$wincmd w<cr>
   xnoremap <silent> <buffer> o    :<c-u>call <sid>open(1)<cr>
-  xnoremap <silent> <buffer> O    :<c-u>call <sid>open(1, 1)<cr>
+  xnoremap <silent> <buffer> <space> :call <sid>open(1)<cr>
   nnoremap          <buffer> <expr> .  <sid>dot()
   nnoremap <silent> <buffer> <expr> ]] <sid>move('')
   nnoremap <silent> <buffer> <expr> ][ <sid>move('')
@@ -184,9 +184,13 @@ function! s:maps()
   xnoremap <silent> <buffer> <expr> [] <sid>move('b')
 
   nmap              <buffer> <C-n> ]]o
+  nmap              <buffer> J     ]]o
   nmap              <buffer> <C-p> [[o
+  nmap              <buffer> K     [[o
   xmap              <buffer> <C-n> ]]ogv
+  xmap              <buffer> J     ]]ogv
   xmap              <buffer> <C-p> [[ogv
+  xmap              <buffer> K     [[ogv
 endfunction
 
 function! s:setup(git_dir, git_origin)
@@ -303,8 +307,6 @@ function! s:gl(buf, visual)
   b #
   lopen
   xnoremap <buffer> o :call <sid>gld()<cr>
-  nnoremap <buffer> o <cr><c-w><c-w>
-  nnoremap <buffer> O :call <sid>gld()<cr>
   nnoremap <buffer> q :tabclose<cr>
   call matchadd('Conceal', '^fugitive://.\{-}\.git//')
   call matchadd('Conceal', '^fugitive://.\{-}\.git//\x\{7}\zs.\{-}||')
