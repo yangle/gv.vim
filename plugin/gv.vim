@@ -84,7 +84,7 @@ endfunction
 function! s:split(tab)
   if a:tab
     call s:tabnew()
-  elseif getwinvar(winnr('$'), 'gv')
+  elseif winnr('$') >= 2 && getwinvar(winnr('$'), 'gv')
     $wincmd w
     enew
   else
@@ -111,7 +111,7 @@ function! s:open(visual, ...)
     call s:fill(target)
     setf diff
   endif
-  nnoremap <silent> <buffer> q :close<cr>
+  nnoremap <silent> <buffer> q :bdelete<cr>
   let bang = a:0 ? '!' : ''
   if exists('#User#GV'.bang)
     execute 'doautocmd <nomodeline> User GV'.bang
@@ -165,7 +165,7 @@ function! s:syntax()
 endfunction
 
 function! s:maps()
-  nnoremap <silent> <buffer> q    :$wincmd w <bar> close<cr>
+  nnoremap <silent> <buffer> q    :$wincmd w <bar> bdelete<cr>
   nnoremap <silent> <buffer> gb   :call <sid>gbrowse()<cr>
   nnoremap <silent> <buffer> <cr> :call <sid>open(0)<cr>:$wincmd w<cr>
   nnoremap <silent> <buffer> o    :call <sid>open(0)<cr>
@@ -194,7 +194,7 @@ function! s:maps()
 endfunction
 
 function! s:setup(git_dir, git_origin)
-  call s:tabnew()
+  enew
   call s:scratch()
 
   if exists('g:fugitive_github_domains')
@@ -272,7 +272,7 @@ function! s:list(fugitive_repo, log_opts)
   call s:maps()
   call s:syntax()
   redraw
-  echo 'o: open split / O: open tab / gb: Gbrowse / q: quit'
+  echo 'o: open split / gb: Gbrowse / q: quit'
 endfunction
 
 function! s:trim(arg)
@@ -301,22 +301,23 @@ function! s:gl(buf, visual)
   if !exists(':Gllog')
     return
   endif
-  tab split
   silent execute a:visual ? "'<,'>" : "" 'Gllog'
+  redraw!
   call setloclist(0, insert(getloclist(0), {'bufnr': a:buf}, 0))
   b #
   lopen
   xnoremap <buffer> o :call <sid>gld()<cr>
-  nnoremap <buffer> q :tabclose<cr>
+  nnoremap <silent> <buffer> q :close<cr>
   call matchadd('Conceal', '^fugitive://.\{-}\.git//')
   call matchadd('Conceal', '^fugitive://.\{-}\.git//\x\{7}\zs.\{-}||')
   setlocal concealcursor=nv conceallevel=3 nowrap
-  let w:quickfix_title = 'o: open / o (in visual): diff / O: open (tab) / q: quit'
+  let w:quickfix_title = 'o: open / o (in visual): diff / q: quit'
 endfunction
 
 function! s:gld() range
   let [to, from] = map([a:firstline, a:lastline], 'split(getline(v:val), "|")[0]')
-  execute (tabpagenr()-1).'tabedit' escape(to, ' ')
+  lclose
+  execute 'edit' escape(to, ' ')
   if from !=# to
     execute 'vsplit' escape(from, ' ')
     windo diffthis
